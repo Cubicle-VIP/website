@@ -9,28 +9,40 @@ ipc.config.retry = 1500;
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     res.send("only post requests valid..").status(400)
 });
-function initiateUpdate() {
-    ipc.connectTo(
-        "world",
-        function() {
-            ipc.of.world.on(
-                'connect',
-                function () {
-                    console.log('connected, sending update message')
-                    ipc.of.world.emit('update', path.resolve(__dirname, ".."));
-                }
-            )
+function initiateUpdate(firstcall) {
+    try {
+        console.log('connected, sending update message')
+        ipc.of.world.emit('update', path.resolve(__dirname, ".."));
+    } catch (err) {
+        if (!firstcall) {
+            console.log("something went wrong with updating...");
+            return;
         }
-    )
+        ipc.connectTo(
+            "world",
+            function () {
+                ipc.of.world.on(
+                    'connect',
+                    function () {
+                        initiateUpdate(true)
+                    }
+                )
+            }
+        )
+    }
 }
+
+
+
+
 
 
 // hmac.update('some data to hash');
 // console.log(hmac.digest('hex'));
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
     console.log("received request from " + req.ip)
     signature = req.header("X-Hub-Signature");
     console.log('signature is ' + signature);
@@ -43,7 +55,7 @@ router.post('/', function(req, res, next) {
         console.log(event_type);
         console.log(delivery_guid);
         res.send("starting updater").status(200)
-        initiateUpdate();
+        initiateUpdate(true);
 
         // exec() todo communicate with open updater process
 
