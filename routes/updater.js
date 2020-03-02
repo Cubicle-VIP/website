@@ -57,5 +57,4 @@ router.post('/', function(req, res, next) {
         res.send("hmac failed").status(401)
     }
 });
-initiateUpdate();
 module.exports = router;
