@@ -21,12 +21,8 @@ router.post('/', function(req, res, next) {
     console.log("received request from " + req.ip)
     signature = req.header("X-Hub-Signature");
     console.log('signature is ' + signature);
-    // hmac.update(req.body)
-
-    hmac.update(JSON.stringify(req.body));
-    own_sig = hmac.digest('hex')
-    console.log('generated signature is ' + own_sig)
-    console.log(req.body);
+    console.log('generated signature is ' + req.hashHmac)
+    // console.log(req.body);
 
 
     event_type = req.header("X-GitHub-Event");

@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 // var bodyParser = require('body-parser');
-
+const crypto = require('crypto');
 
 
 
@@ -19,7 +19,14 @@ app.set('view engine', 'pug');
 
 
 app.use(logger('dev'));
-app.use(express.json());
+app.use(express.json({
+  verify: function (req, res, buf, encoding) {
+    let hash = crypto.createHmac('sha1');
+    hash.update(buf);
+    req.hashHmac = hash.digest('hex');
+    // console.log(req.hashHmac);
+  }
+}));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
