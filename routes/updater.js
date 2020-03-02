@@ -3,6 +3,13 @@ var router = express.Router();
 const crypto = require("crypto");
 const { exec} = require('child_process');
 const fs = require('fs')
+const ipc = require('node-ipc')
+const path = require('path');
+
+ipc.config.id = "cubicle.vip";
+ipc.config.retry = 1500;
+
+
 secrets = JSON.parse(fs.readFileSync("./config/secrets.json"));
 
 // const hmac = crypto.createHmac('sha1', secrets.update_key);
@@ -11,6 +18,21 @@ secrets = JSON.parse(fs.readFileSync("./config/secrets.json"));
 router.get('/', function(req, res, next) {
     res.send("only post requests valid..").status(400)
 });
+function initiateUpdate() {
+    ipc.connectTo(
+        "world",
+        function() {
+            ipc.of.world.on(
+                'connect',
+                function () {
+                    console.log('connected, sending update message')
+                    ipc.of.world.emit('update', path.resolve(__dirname, ".."));
+                }
+            )
+        }
+    )
+}
+
 
 // hmac.update('some data to hash');
 // console.log(hmac.digest('hex'));
@@ -27,11 +49,13 @@ router.post('/', function(req, res, next) {
         console.log(event_type);
         console.log(delivery_guid);
         res.send("starting updater").status(200)
+        initiateUpdate();
+
         // exec() todo communicate with open updater process
 
     } else {
         res.send("hmac failed").status(401)
     }
 });
-
+initiateUpdate();
 module.exports = router;
