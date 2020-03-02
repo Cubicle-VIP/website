@@ -21,6 +21,8 @@ app.set('view engine', 'pug');
 let hmacCreation = function (req, res, buf, encoding) {
   if (buf && buf.length) {
     let hash = crypto.createHmac('sha1');
+    console.log("the buffer is define right?")
+    console.log(buf)
     hash.update(buf.toString(encoding));
     req.hashHmac = hash.digest('hex');
   }
