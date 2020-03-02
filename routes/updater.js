@@ -7,11 +7,6 @@ const path = require('path');
 ipc.config.id = "cubicle.vip";
 ipc.config.retry = 1500;
 
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.send("only post requests valid..").status(400)
-});
 function initiateUpdate(firstcall) {
     try {
         console.log('connected, sending update message')
@@ -35,13 +30,6 @@ function initiateUpdate(firstcall) {
     }
 }
 
-
-
-
-
-
-// hmac.update('some data to hash');
-// console.log(hmac.digest('hex'));
 router.post('/', function (req, res, next) {
     console.log("received request from " + req.ip)
     signature = req.header("X-Hub-Signature");
@@ -56,9 +44,6 @@ router.post('/', function (req, res, next) {
         console.log(delivery_guid);
         res.send("starting updater").status(200)
         initiateUpdate(true);
-
-        // exec() todo communicate with open updater process
-
     } else {
         res.send("hmac failed").status(401)
     }
