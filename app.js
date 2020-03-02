@@ -44,4 +44,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+console.log("Starting up application.")
+
 module.exports = app;
