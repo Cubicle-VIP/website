@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const fs = require('fs')
 secrets = JSON.parse(fs.readFileSync("./config/secrets.json"));
 
-const hmac = crypto.createHmac('sha1', secrets.update_key);
+// const hmac = crypto.createHmac('sha1', secrets.update_key);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -13,14 +13,17 @@ router.get('/', function(req, res, next) {
 });
 
 // var middleware = require("hmac-express")("sha1", secrets.update_key, "X-Hub-Signature")
+const hmac = crypto.createHmac('SHA1', 'a secret');
 
+// hmac.update('some data to hash');
+// console.log(hmac.digest('hex'));
 router.post('/', function(req, res, next) {
     console.log("received request from " + req.ip)
     signature = req.header("X-Hub-Signature");
     console.log('signature is ' + signature);
     // hmac.update(req.body)
 
-    hmac.update(req.body);
+    hmac.update(JSON.stringify(req.body));
     own_sig = hmac.digest('hex')
     console.log('generated signature is ' + own_sig)
     console.log(req.body);
