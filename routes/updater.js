@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const crypto = require("crypto");
-const { exec} = require('child_process');
 const fs = require('fs')
 const ipc = require('node-ipc')
 const path = require('path');
@@ -9,10 +7,6 @@ const path = require('path');
 ipc.config.id = "cubicle.vip";
 ipc.config.retry = 1500;
 
-
-secrets = JSON.parse(fs.readFileSync("./config/secrets.json"));
-
-// const hmac = crypto.createHmac('sha1', secrets.update_key);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
