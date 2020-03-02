@@ -19,6 +19,7 @@ app.set('view engine', 'pug');
 
 const fs = require('fs')
 secrets = JSON.parse(fs.readFileSync("./config/secrets.json"));
+// todo maybe only do this for /updater
 let hmacCreation = function (req, res, buf, encoding) {
   if (buf && buf.length) {
     let hash = crypto.createHmac('sha1', secrets.update_key);
