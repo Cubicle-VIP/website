@@ -17,13 +17,12 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-
+const fs = require('fs')
+secrets = JSON.parse(fs.readFileSync("./config/secrets.json"));
 let hmacCreation = function (req, res, buf, encoding) {
   if (buf && buf.length) {
-    let hash = crypto.createHmac('sha1');
-    console.log("the buffer is define right?")
-    console.log(buf)
-    hash.update(buf.toString(encoding));
+    let hash = crypto.createHmac('sha1', secrets.update_key);
+    hash.update(buf);
     req.hashHmac = hash.digest('hex');
   }
 }
