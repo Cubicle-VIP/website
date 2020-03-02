@@ -18,16 +18,19 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 
+let hmacCreation = function (req, res, buf, encoding) {
+  if (buf && buf.length) {
+    let hash = crypto.createHmac('sha1');
+    hash.update(buf.toString(encoding));
+    req.hashHmac = hash.digest('hex');
+  }
+}
+
 app.use(logger('dev'));
 app.use(express.json({
-  verify: function (req, res, buf, encoding) {
-    let hash = crypto.createHmac('sha1');
-    hash.update(buf);
-    req.hashHmac = hash.digest('hex');
-    // console.log(req.hashHmac);
-  }
+  verify: hmacCreation
 }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, verify: hmacCreation }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
